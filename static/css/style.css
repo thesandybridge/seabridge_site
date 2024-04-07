@@ -1,0 +1,10 @@
+html, body {
+    background: #151515;
+    color: #928374;
+}
+
+pre {
+    padding: 1rem;
+    border: solid 1px #303030;
+    border-radius: 5px;
+}
