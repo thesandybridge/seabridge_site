@@ -1,3 +1,4 @@
+{{define "base"}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,8 +8,9 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <title>{{.Title}}</title>
 </head>
-<body>
-    {{block "content" .}}{{end}}
-</body>
+    <body class="{{.Classes}}">
+        {{template "nav" .}}
+        {{template "content" .}}
+    </body>
 </html>
-
+{{end}}

@@ -12,17 +12,18 @@ import (
 )
 
 var (
-	tmplIndex    = template.Must(template.ParseFiles("templates/index.html"))
-	tmplBlogList = template.Must(template.ParseFiles("templates/blog.html"))
-	tmplBlogPost = template.Must(template.ParseFiles("templates/post.html"))
+	indexTemplate        = template.Must(template.ParseFiles("templates/index.html", "templates/base.html", "templates/nav.html"))
+	blogTemplate         = template.Must(template.ParseFiles("templates/blog.html", "templates/base.html", "templates/nav.html"))
+	postTemplate         = template.Must(template.ParseFiles("templates/post.html", "templates/base.html", "templates/nav.html"))
+	pageNotFoundTemplate = template.Must(template.ParseFiles("templates/404.html", "templates/base.html", "templates/nav.html"))
 )
 
 func StartServer() {
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	http.HandleFunc("/", viewHandler)
 	http.HandleFunc("/blog/", blogHandler)
+	http.HandleFunc("/", catchAllHandler)
 
 	log.Println("Listening on http://localhost:8080...")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
@@ -37,14 +38,48 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Message string
+		Title       string
+		Description string
+		Classes     string
 	}{
-		Message: "Welcome to the Go webserver!",
+		Title:       "sbx blog",
+		Description: "A simple blog built with Go and Markdown.",
+		Classes:     "home",
 	}
 
-	if err := tmplIndex.Execute(w, data); err != nil {
+	if err := indexTemplate.ExecuteTemplate(w, "base", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func notFoundHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+
+		data := struct {
+			Title       string
+			Description string
+			Classes     string
+		}{
+			Title:       "404 Not Found",
+			Description: "The page you're looking for doesn't exist.",
+			Classes:     "not-found",
+		}
+
+		if err := pageNotFoundTemplate.ExecuteTemplate(w, "base.html", data); err != nil {
+			log.Printf("Failed to execute 404 template: %v", err)
+			http.Error(w, "404 Not Found", http.StatusNotFound)
+		}
+	})
+}
+
+func catchAllHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/" {
+		viewHandler(w, r)
+		return
+	}
+
+	notFoundHandler().ServeHTTP(w, r)
 }
 
 type BlogPostSummary struct {
@@ -80,8 +115,22 @@ func serveBlogList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := tmplBlogList.Execute(w, posts); err != nil {
-		http.Error(w, "Error rendering blog list", http.StatusInternalServerError)
+	data := struct {
+		Title           string
+		Description     string
+		Posts           []BlogPostSummary
+		Classes         string
+		ContentTemplate string
+	}{
+		Title:           "Your Blog Title",
+		Description:     "Your Blog Description",
+		Posts:           posts,
+		Classes:         "blog",
+		ContentTemplate: "blog.html",
+	}
+
+	if err := blogTemplate.ExecuteTemplate(w, "base", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -94,14 +143,20 @@ func serveBlogPost(w http.ResponseWriter, r *http.Request, slug string) {
 	}
 
 	data := struct {
-		Title   string
-		Content template.HTML
+		Title           string
+		Content         template.HTML
+		Description     string
+		Classes         string
+		ContentTemplate string
 	}{
-		Title:   strings.ReplaceAll(slug, "-", " "),
-		Content: template.HTML(htmlContent),
+		Title:           strings.ReplaceAll(slug, "-", " "),
+		Content:         template.HTML(htmlContent),
+		Description:     "Your Blog Description",
+		Classes:         "post",
+		ContentTemplate: "post.html",
 	}
 
-	if err := tmplBlogPost.Execute(w, data); err != nil {
-		http.Error(w, "Error rendering blog post", http.StatusInternalServerError)
+	if err := postTemplate.ExecuteTemplate(w, "base", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

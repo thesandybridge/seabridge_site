@@ -1,14 +1,9 @@
-<html>
-<head>
-    <title>Blog Posts</title>
-</head>
-<body>
+{{define "content"}}
     <h1>Blog Posts</h1>
     <ul>
-        {{range .}}
+        {{range .Posts}}
         <li><a href="/blog/{{.Slug}}">{{.Title}}</a></li>
         {{end}}
     </ul>
-</body>
-</html>
+{{end}}
 
