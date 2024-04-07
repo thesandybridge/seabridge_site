@@ -49,11 +49,11 @@ pre {
     padding: 1rem;
     border: solid 1px #303030;
     border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     cursor: pointer;
 
     &:hover {
         border-color: #928374;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     }
 
     ::selection {

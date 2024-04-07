@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -23,7 +24,8 @@ func StartServer() {
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	http.HandleFunc("/blog/", blogHandler)
-	http.HandleFunc("/", catchAllHandler)
+	http.HandleFunc("/", viewHandler)
+	http.HandleFunc("/404", errorHandler)
 
 	log.Println("Listening on http://localhost:8080...")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
@@ -32,11 +34,6 @@ func StartServer() {
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
-
 	data := struct {
 		Title       string
 		Description string
@@ -52,34 +49,11 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func notFoundHandler() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusNotFound)
-
-		data := struct {
-			Title       string
-			Description string
-			Classes     string
-		}{
-			Title:       "404 Not Found",
-			Description: "The page you're looking for doesn't exist.",
-			Classes:     "not-found",
-		}
-
-		if err := pageNotFoundTemplate.ExecuteTemplate(w, "base.html", data); err != nil {
-			log.Printf("Failed to execute 404 template: %v", err)
-			http.Error(w, "404 Not Found", http.StatusNotFound)
-		}
-	})
-}
-
-func catchAllHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/" {
-		viewHandler(w, r)
-		return
+func errorHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	if err := pageNotFoundTemplate.ExecuteTemplate(w, "base", nil); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-
-	notFoundHandler().ServeHTTP(w, r)
 }
 
 type BlogPostSummary struct {
@@ -136,6 +110,10 @@ func serveBlogList(w http.ResponseWriter, r *http.Request) {
 
 func serveBlogPost(w http.ResponseWriter, r *http.Request, slug string) {
 	markdownFile := filepath.Join("content", slug+".md")
+	if _, err := os.Stat(markdownFile); os.IsNotExist(err) {
+		errorHandler(w, r)
+		return
+	}
 	htmlContent, err := markdown.ConvertToHTML(markdownFile)
 	if err != nil {
 		http.Error(w, "Could not load blog post", http.StatusNotFound)
