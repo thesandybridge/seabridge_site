@@ -68,22 +68,28 @@ function processCommands(cmdInput, messagesDiv) {
             break;
         case 'cd':
             if (args.length === 2) {
-                const path = args[1];
-                switch (path.toLowerCase()) {
-                    case '/':
-                        window.location.href = path.toLowerCase();
-                        break;
-                    case 'home':
-                        window.location.href = '/';
-                        break;
-                    case '..':
-                        window.location.href = '/';
-                        break
-                    default:
-                        window.location.href = '/'+path.toLowerCase();
+                const inputPath = args[1].toLowerCase();
+                let newPath;
+
+                if (inputPath === '/') {
+                    newPath = window.location.origin;
+                } else if (inputPath === 'home') {
+                    newPath = window.location.origin;
+                } else if (inputPath === '..') {
+                    const pathParts = window.location.pathname.split('/');
+                    const filteredParts = pathParts.filter(Boolean).slice(0, -1);
+                    newPath = `${window.location.origin}/${filteredParts.join('/')}`;
+                } else if (inputPath.startsWith('/')) {
+                    newPath = window.location.origin + inputPath;
+                } else {
+                    const currPath = window.location.pathname.endsWith('/') ?
+                        window.location.pathname.slice(0, -1) : window.location.pathname;
+                    newPath = `${window.location.origin}${currPath}/${inputPath}`;
                 }
+
+                window.location.href = newPath;
             } else if (args.length === 1) {
-                window.location.href = '/';
+                window.location.href = window.location.origin;
             } else {
                 appendToTarget(target, "Invalid args");
             }
@@ -118,13 +124,14 @@ function appendToTarget(messagesDiv, message) {
 }
 
 function createNewInput(messagesDiv) {
+    const wrapper = document.querySelector('.cmd-wrapper');
     const newCmdInput = document.createElement('input');
     newCmdInput.type = 'text';
     newCmdInput.id = 'cmd';
     newCmdInput.autofocus = true;
     newCmdInput.spellcheck = false;
 
-    messagesDiv.parentNode.insertBefore(newCmdInput, messagesDiv.nextSibling);
+    wrapper.append(newCmdInput);
 
     newCmdInput.focus();
 

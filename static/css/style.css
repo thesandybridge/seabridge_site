@@ -6,6 +6,7 @@
     --secondary-fg: #d79921;
     --secondary-bg: #303030;
     --code-bg: #282828;
+    --alt: #8ec07c;
     font-family: 'Kode Mono', monospace;
     font-size: 16px;
     line-height: 1.5;
@@ -217,16 +218,21 @@ footer {
     max-height: 40vh;
     overflow-y: scroll;
     box-sizing: border-box;
-    color: var(--secondary-fg);
+    color: var(--alt);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+
+    .cmd-wrapper {
+        display: flex;
+        padding: 1rem;
+    }
 
     input {
         background: none;
         border: none;
-        color: var(--secondary-fg);
-        padding: 1rem;
-        width: 100%;
+        color: var(--alt);
+        flex: auto;
         box-sizing: border-box;
+        position: relative;
         font-family: 'Kode Mono', monospace;
         font-size: 16px;
         line-height: 1.5;
