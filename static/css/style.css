@@ -50,14 +50,43 @@ pre {
     border: solid 1px #303030;
     border-radius: 5px;
     cursor: pointer;
+    position: relative;
 
     &:hover {
         border-color: #928374;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+
+        & > .copy-button {
+            display: block;
+        }
     }
 
     ::selection {
         background: #151515;
         color: inherit;
     }
+
+    .copy-button {
+        position: absolute;
+        display: none;
+        top: 0.5rem;
+        right: 0.5rem;
+        border: solid 1px #928374;
+        border-radius: 5px;
+        padding: .5rem;
+        color: #928374;
+        background: #282828;
+        cursor: pointer;
+
+        &.copied {
+            background: #d79921;
+            color: #151515;
+        }
+
+        svg {
+            fill: #928374;
+        }
+    }
+
+
 }
