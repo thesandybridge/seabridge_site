@@ -71,20 +71,20 @@ function processCommands(cmdInput, messagesDiv) {
                 const inputPath = args[1].toLowerCase();
                 let newPath;
 
-                if (inputPath === '/') {
-                    newPath = window.location.origin;
-                } else if (inputPath === 'home') {
+                if (inputPath === '/' || inputPath === 'home') {
                     newPath = window.location.origin;
                 } else if (inputPath === '..') {
-                    const pathParts = window.location.pathname.split('/');
-                    const filteredParts = pathParts.filter(Boolean).slice(0, -1);
-                    newPath = `${window.location.origin}/${filteredParts.join('/')}`;
-                } else if (inputPath.startsWith('/')) {
-                    newPath = window.location.origin + inputPath;
+                    const pathParts = window.location.pathname.split('/').filter(Boolean);
+                    pathParts.pop();
+                    newPath = `${window.location.origin}/${pathParts.join('/')}`;
                 } else {
-                    const currPath = window.location.pathname.endsWith('/') ?
-                        window.location.pathname.slice(0, -1) : window.location.pathname;
-                    newPath = `${window.location.origin}${currPath}/${inputPath}`;
+                    if (inputPath.startsWith('/')) {
+                        newPath = window.location.origin + inputPath;
+                    } else {
+                        const currentDir = window.location.pathname.endsWith('/') ?
+                            window.location.pathname : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+                        newPath = `${window.location.origin}${currentDir}${inputPath}`;
+                    }
                 }
 
                 window.location.href = newPath;
@@ -94,6 +94,7 @@ function processCommands(cmdInput, messagesDiv) {
                 appendToTarget(target, "Invalid args");
             }
             break;
+
         case 'echo':
             if (args.length === 2) {
                 appendToTarget(messagesDiv, args[1]);
