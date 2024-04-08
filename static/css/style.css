@@ -226,6 +226,14 @@ footer {
     }
 }
 
+#term-toggle {
+    display: flex;
+    cursor: pointer;
+    svg {
+        width: 1.5rem;
+    }
+}
+
 
 @media screen and (max-width: 900px) {
     #term-toggle {
