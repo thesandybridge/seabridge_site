@@ -14,10 +14,10 @@ import (
 )
 
 var (
-	indexTemplate        = template.Must(template.ParseFiles("templates/index.html", "templates/base.html", "templates/nav.html"))
-	blogTemplate         = template.Must(template.ParseFiles("templates/blog.html", "templates/base.html", "templates/nav.html"))
-	postTemplate         = template.Must(template.ParseFiles("templates/post.html", "templates/base.html", "templates/nav.html"))
-	pageNotFoundTemplate = template.Must(template.ParseFiles("templates/404.html", "templates/base.html", "templates/nav.html"))
+	indexTemplate        = template.Must(template.ParseFiles("templates/index.html", "templates/base.html", "templates/nav.html", "templates/terminal.html"))
+	blogTemplate         = template.Must(template.ParseFiles("templates/blog.html", "templates/base.html", "templates/nav.html", "templates/terminal.html"))
+	postTemplate         = template.Must(template.ParseFiles("templates/post.html", "templates/base.html", "templates/nav.html", "templates/terminal.html"))
+	pageNotFoundTemplate = template.Must(template.ParseFiles("templates/404.html", "templates/base.html", "templates/nav.html", "templates/terminal.html"))
 )
 
 func StartServer() {

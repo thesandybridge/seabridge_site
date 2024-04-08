@@ -1,9 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400;700&display=swap');
+
 :root {
     --primary-fg: #928374;
     --primary-bg: #151515;
     --secondary-fg: #d79921;
     --secondary-bg: #303030;
     --code-bg: #282828;
+    font-family: 'Kode Mono', monospace;
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
 }
 
 html, body {
@@ -125,7 +133,8 @@ h6 {
 .ascii {
     display: flex;
     justify-content: center;
-    font-size: clamp(4px, 1vw, .75rem);
+    font-size: clamp(4px, 1vw, .9rem);
+    text-shadow: var(--primary-fg) 1px 0 6px;
 }
 
 pre:not(.ascii) {
@@ -176,4 +185,20 @@ footer {
     margin-top: auto;
     align-items: center;
     gap: 1rem;
+}
+
+#terminal {
+    width: 100%;
+    background: var(--code-bg);
+    border: solid 1px var(--secondary-bg);
+    border-radius: 5px;
+    resize: vertical;
+    max-height: 20vh;
+    padding: 1rem;
+    box-sizing: border-box;
+
+    &:focus-visible {
+        border: none;
+        outline: solid 2px var(--secondary-bg);
+    }
 }
