@@ -7,7 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 function copyButton() {
-    const pre = document.querySelectorAll("pre");
+    const posts = document.querySelector(".post");
+
+    if (!posts) return;
+
+    const pre = document.querySelectorAll("pre:not(.ascii)");
 
     if (pre.length == 0) return;
 
