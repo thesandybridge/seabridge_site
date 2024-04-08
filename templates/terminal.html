@@ -1,6 +1,8 @@
 {{define "term"}}
 <div class="terminal-wrapper">
-    <textarea id="terminal" rows="8" autofocus spellcheck="false">
-    </textarea>
+    <code id="terminal">
+        <div class="msg"></div>
+        <input id="cmd" type="text" spellcheck="false" autofocus/>
+    </code>
 </div>
 {{end}}

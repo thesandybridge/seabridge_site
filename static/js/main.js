@@ -53,80 +53,91 @@ function activeMenuItem() {
     });
 }
 
-function processCommands(buffer, target, e) {
-    e.preventDefault();
-
-    const lines = buffer.split('\n');
-    let ignore = false;
+function processCommands(cmdInput, messagesDiv) {
     const menu_items = [...document.querySelectorAll('#main-nav a')].map(i => i.outerText);
+    const commandText = cmdInput.value.trim();
+    const args = parseArguments(commandText);
+    appendToTarget(messagesDiv, `> ${commandText}`);
 
-    lines.forEach((line, index) => {
-        if (index === lines.length - 1) {
-            const args = parseArguments(line);
-
-            switch (args[0]) {
-                case 'clear':
-                    target.value = '';
-                    ignore = true;
-                    break;
-                case 'ls':
-                    appendToTarget(target, menu_items.join(" "))
-                    break;
-                case 'cd':
-                    if (args.length === 2) {
-                        const path = args[1];
-                        switch (path.toLowerCase()) {
-                            case '/':
-                                window.location.href = path.toLowerCase();
-                                break;
-                            case 'home':
-                                window.location.href = '/';
-                                break;
-                            case '..':
-                                window.location.href = '/';
-                                break
-                            default:
-                                window.location.href = '/'+path.toLowerCase();
-                        }
-                    } else if (args.length === 1) {
+    switch (args[0]) {
+        case 'clear':
+            messagesDiv.innerHTML = '';
+            break;
+        case 'ls':
+            appendToTarget(messagesDiv, menu_items.join(" "));
+            break;
+        case 'cd':
+            if (args.length === 2) {
+                const path = args[1];
+                switch (path.toLowerCase()) {
+                    case '/':
+                        window.location.href = path.toLowerCase();
+                        break;
+                    case 'home':
                         window.location.href = '/';
-                    } else {
-                        appendToTarget(target, "Invalid args");
-                    }
-                    break;
-                case 'echo':
-                    if (args.length === 2) {
-                        appendToTarget(target, args[1]);
-                    } else {
-                        appendToTarget(target, "Invalid args");
-                    }
-                    break;
-                case 'contact':
-                    appendToTarget(target, "Nice try, it doesn't work yet... check me out on github");
-                    break;
-                case 'help':
-                    appendToTarget(target, "Thanks for visiting my site! Here are some commands you can try...\n\tcd <arg>\n\techo <arg>\n\tclear\n\thelp\n\tcontact <your_email> <your_message>");
-                    break;
-                default:
-                    appendToTarget(target, "");
-                    ignore = true
+                        break;
+                    case '..':
+                        window.location.href = '/';
+                        break
+                    default:
+                        window.location.href = '/'+path.toLowerCase();
+                }
+            } else if (args.length === 1) {
+                window.location.href = '/';
+            } else {
+                appendToTarget(target, "Invalid args");
             }
+            break;
+        case 'echo':
+            if (args.length === 2) {
+                appendToTarget(messagesDiv, args[1]);
+            } else {
+                appendToTarget(messagesDiv, "Invalid args");
+            }
+            break;
+        case 'contact':
+            appendToTarget(messagesDiv, "Nice try, it doesn't work yet... check me out on GitHub");
+            break;
+        case 'help':
+            appendToTarget(messagesDiv, "Thanks for visiting my site! Here are some commands you can try...\n\tcd <arg>\n\techo <arg>\n\tclear\n\thelp\n\tcontact <your_email> <your_message>");
+            break;
+        default:
+            appendToTarget(messagesDiv, "Invalid command");
+    }
+
+    cmdInput.remove();
+    createNewInput(messagesDiv);
+}
+
+function appendToTarget(messagesDiv, message) {
+    const newMessage = document.createElement('pre');
+    newMessage.classList.add('ignore');
+    newMessage.textContent = message;
+    messagesDiv.appendChild(newMessage);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function createNewInput(messagesDiv) {
+    const newCmdInput = document.createElement('input');
+    newCmdInput.type = 'text';
+    newCmdInput.id = 'cmd';
+    newCmdInput.autofocus = true;
+    newCmdInput.spellcheck = false;
+
+    messagesDiv.parentNode.insertBefore(newCmdInput, messagesDiv.nextSibling);
+
+    newCmdInput.focus();
+
+    newCmdInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            processCommands(newCmdInput, messagesDiv);
         }
     });
-
-    positionCursorForNextLine(target, ignore);
 }
 
-function appendToTarget(target, message) {
-    target.value += (target.value ? "\n" : "") + message;
-}
 
-function positionCursorForNextLine(target, ignore) {
-    if (ignore) return
-    target.value += '\n';
-    target.scrollTop = target.scrollHeight;
-    const end = target.value.length;
-    target.setSelectionRange(end, end);
+function positionCursorForNextLine(cmdInput) {
+    cmdInput.focus();
 }
 
 function parseArguments(input) {
@@ -155,59 +166,59 @@ function parseArguments(input) {
 }
 
 function terminal() {
-    const term = document.querySelector('#terminal');
-    if (!term) return
+    const messagesDiv = document.querySelector('.msg');
+    const initialCmdInput = document.querySelector('#cmd');
 
-    term.addEventListener('keydown', (event) => {
+    initialCmdInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
-            processCommands(term.value, term, event);
+            processCommands(initialCmdInput, messagesDiv);
         }
-    })
-
+    });
 }
-
 
 function showTerm() {
     const wrapper = document.querySelector('.terminal-wrapper');
     const toggle = document.querySelector('#term-toggle');
-    const textarea = document.querySelector('#terminal');
 
-    if (!toggle) return
+    if (!toggle) return;
 
     toggle.addEventListener('click', () => {
         wrapper.classList.toggle('visible');
-        textarea.value = '';
-        if (wrapper.classList.contains('visible')) {
-            textarea.focus();
+        const currentInput = wrapper.querySelector('input');
+        if (currentInput && wrapper.classList.contains('visible')) {
+            currentInput.value = '';
+            currentInput.focus();
         }
     });
 
-    textarea.addEventListener('click', (event) => {
-        event.stopPropagation();
-    });
-
-    wrapper.addEventListener('click', () => {
-        wrapper.classList.remove('visible');
-        textarea.value = '';
+    wrapper.addEventListener('click', (event) => {
+        if (event.target.tagName.toLowerCase() === 'input') {
+            event.stopPropagation();
+        } else {
+            wrapper.classList.remove('visible');
+            const currentInput = wrapper.querySelector('input');
+            if (currentInput) {
+                currentInput.value = '';
+            }
+        }
     });
 
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             wrapper.classList.remove('visible');
-            textarea.value = '';
-        }
-    });
-
-    document.addEventListener('keydown', (event) => {
-        if (event.ctrlKey && (event.key === 'k' || event.key === 'K')) {
+            const currentInput = wrapper.querySelector('input');
+            if (currentInput) {
+                currentInput.value = '';
+            }
+        } else if (event.ctrlKey && (event.key === 'k' || event.key === 'K')) {
             event.preventDefault();
             wrapper.classList.toggle('visible');
-            textarea.value = '';
-            if (wrapper.classList.contains('visible')) {
-                textarea.focus();
+            const currentInput = wrapper.querySelector('input');
+            if (currentInput && wrapper.classList.contains('visible')) {
+                currentInput.value = '';
+                currentInput.focus();
             }
         }
     });
-
 }
 
