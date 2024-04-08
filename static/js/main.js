@@ -17,7 +17,7 @@ function copyButton() {
         button.setAttribute("data-clipboard-target", `#code-${idx}`);
         code.appendChild(button);
 
-        button.addEventListener("click", () => {
+        this.addEventListener("click", () => {
             navigator.clipboard.writeText(code.innerText).then(() => {
                 button.innerHTML = "Copied!";
                 button.classList.add("copied");
