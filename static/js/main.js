@@ -177,6 +177,9 @@ function showTerm() {
     toggle.addEventListener('click', () => {
         wrapper.classList.toggle('visible');
         textarea.value = '';
+        if (wrapper.classList.contains('visible')) {
+            textarea.focus();
+        }
     });
 
     textarea.addEventListener('click', (event) => {
@@ -194,5 +197,17 @@ function showTerm() {
             textarea.value = '';
         }
     });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.ctrlKey && (event.key === 'k' || event.key === 'K')) {
+            event.preventDefault();
+            wrapper.classList.toggle('visible');
+            textarea.value = '';
+            if (wrapper.classList.contains('visible')) {
+                textarea.focus();
+            }
+        }
+    });
+
 }
 
