@@ -187,7 +187,28 @@ footer {
     gap: 1rem;
 }
 
+.terminal-wrapper {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    visibility: hidden;
+    transform: translateY(-100%);
+
+    &.visible {
+        transform: translateY(0);
+        visibility: visible;
+    }
+}
+
 #terminal {
+    max-width: calc(800px - 2rem);
     width: 100%;
     background: var(--code-bg);
     border: solid 1px var(--secondary-bg);
@@ -196,6 +217,8 @@ footer {
     max-height: 20vh;
     padding: 1rem;
     box-sizing: border-box;
+    color: var(--secondary-fg);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 
     &:focus-visible {
         border: none;

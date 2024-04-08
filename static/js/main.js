@@ -1,5 +1,7 @@
 window.onload = () => {
     copyButton();
+    terminal();
+    showTerm();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -50,3 +52,144 @@ function activeMenuItem() {
         }
     });
 }
+
+function processCommands(buffer, target, e) {
+    e.preventDefault();
+
+    const lines = buffer.split('\n');
+    let ignore = false;
+    const menu_items = [...document.querySelectorAll('#main-nav a')].map(i => i.outerText);
+
+    lines.forEach((line, index) => {
+        if (index === lines.length - 1) {
+            const args = parseArguments(line);
+
+            switch (args[0]) {
+                case 'clear':
+                    target.value = '';
+                    ignore = true;
+                    break;
+                case 'ls':
+                    appendToTarget(target, menu_items.join(" "))
+                    break;
+                case 'cd':
+                    if (args.length === 2) {
+                        const path = args[1];
+                        switch (path.toLowerCase()) {
+                            case '/':
+                                window.location.href = path.toLowerCase();
+                                break;
+                            case 'home':
+                                window.location.href = '/';
+                                break;
+                            case '..':
+                                window.location.href = '/';
+                                break
+                            default:
+                                window.location.href = '/'+path.toLowerCase();
+                        }
+                    } else if (args.length === 1) {
+                        window.location.href = '/';
+                    } else {
+                        appendToTarget(target, "Invalid args");
+                    }
+                    break;
+                case 'echo':
+                    if (args.length === 2) {
+                        appendToTarget(target, args[1]);
+                    } else {
+                        appendToTarget(target, "Invalid args");
+                    }
+                    break;
+                case 'contact':
+                    appendToTarget(target, "Nice try, it doesn't work yet... check me out on github");
+                    break;
+                case 'help':
+                    appendToTarget(target, "Thanks for visiting my site! Here are some commands you can try...\n\tcd <arg>\n\techo <arg>\n\tclear\n\thelp\n\tcontact <your_email> <your_message>");
+                    break;
+                default:
+                    appendToTarget(target, "");
+                    ignore = true
+            }
+        }
+    });
+
+    positionCursorForNextLine(target, ignore);
+}
+
+function appendToTarget(target, message) {
+    target.value += (target.value ? "\n" : "") + message;
+}
+
+function positionCursorForNextLine(target, ignore) {
+    if (ignore) return
+    target.value += '\n';
+    target.scrollTop = target.scrollHeight;
+    const end = target.value.length;
+    target.setSelectionRange(end, end);
+}
+
+function parseArguments(input) {
+    const args = [];
+    let currentArg = '';
+    let inQuotes = false;
+
+    for (const char of input) {
+        if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (!inQuotes && char === ' ') {
+            if (currentArg) {
+                args.push(currentArg);
+                currentArg = '';
+            }
+        } else {
+            currentArg += char;
+        }
+    }
+
+    if (currentArg) {
+        args.push(currentArg);
+    }
+
+    return args;
+}
+
+function terminal() {
+    const term = document.querySelector('#terminal');
+
+    term.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            processCommands(term.value, term, event);
+        }
+    })
+
+}
+
+
+function showTerm() {
+    const wrapper = document.querySelector('.terminal-wrapper');
+    const toggle = document.querySelector('#term-toggle');
+    const textarea = document.querySelector('#terminal');
+
+    toggle.addEventListener('click', () => {
+        wrapper.classList.toggle('visible');
+        textarea.value = '';
+    });
+
+    textarea.addEventListener('click', (event) => {
+        event.stopPropagation();
+    });
+
+    wrapper.addEventListener('click', () => {
+        wrapper.classList.remove('visible');
+        textarea.value = '';
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            wrapper.classList.remove('visible');
+            textarea.value = '';
+        }
+    });
+}
+
