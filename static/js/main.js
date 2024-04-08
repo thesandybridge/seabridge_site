@@ -156,6 +156,7 @@ function parseArguments(input) {
 
 function terminal() {
     const term = document.querySelector('#terminal');
+    if (!term) return
 
     term.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
@@ -170,6 +171,8 @@ function showTerm() {
     const wrapper = document.querySelector('.terminal-wrapper');
     const toggle = document.querySelector('#term-toggle');
     const textarea = document.querySelector('#terminal');
+
+    if (!toggle) return
 
     toggle.addEventListener('click', () => {
         wrapper.classList.toggle('visible');

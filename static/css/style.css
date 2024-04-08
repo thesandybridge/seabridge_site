@@ -225,3 +225,10 @@ footer {
         outline: solid 2px var(--secondary-bg);
     }
 }
+
+
+@media screen and (max-width: 900px) {
+    #term-toggle {
+        display: none;
+    }
+}
