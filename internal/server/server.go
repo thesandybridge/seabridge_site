@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"sbxblog/internal/markdown"
 )
@@ -38,10 +39,14 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		Title       string
 		Description string
 		Classes     string
+		Date        string
+		Path        string
 	}{
 		Title:       "sbx blog",
 		Description: "A simple blog built with Go and Markdown.",
 		Classes:     "home",
+		Date:        time.Now().Format("2006"),
+		Path:        r.URL.Path,
 	}
 
 	if err := indexTemplate.ExecuteTemplate(w, "base", data); err != nil {
@@ -95,12 +100,16 @@ func serveBlogList(w http.ResponseWriter, r *http.Request) {
 		Posts           []BlogPostSummary
 		Classes         string
 		ContentTemplate string
+		Date            string
+		Path            string
 	}{
 		Title:           "Your Blog Title",
 		Description:     "Your Blog Description",
 		Posts:           posts,
 		Classes:         "blog",
 		ContentTemplate: "blog.html",
+		Date:            time.Now().Format("2006"),
+		Path:            r.URL.Path,
 	}
 
 	if err := blogTemplate.ExecuteTemplate(w, "base", data); err != nil {
@@ -126,12 +135,16 @@ func serveBlogPost(w http.ResponseWriter, r *http.Request, slug string) {
 		Description     string
 		Classes         string
 		ContentTemplate string
+		Date            string
+		Path            string
 	}{
 		Title:           strings.ReplaceAll(slug, "-", " "),
 		Content:         template.HTML(htmlContent),
 		Description:     "Your Blog Description",
 		Classes:         "post",
 		ContentTemplate: "post.html",
+		Date:            time.Now().Format("2006"),
+		Path:            r.URL.Path,
 	}
 
 	if err := postTemplate.ExecuteTemplate(w, "base", data); err != nil {

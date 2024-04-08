@@ -1,9 +1,12 @@
 {{define "content"}}
-    <h1>Blog Posts</h1>
-    <ul>
-        {{range .Posts}}
-        <li><a href="/blog/{{.Slug}}">{{.Title}}</a></li>
-        {{end}}
-    </ul>
+<h1>
+    Blog, Guides, Notes
+</h1>
+<p>This is collection of blog posts on whatever I feel like writing about, as well as some guides I wrote. I also keep some notes here for personal use that I have marked public.</p>
+<nav>
+    {{range .Posts}}
+    <li><a href="/blog/{{.Slug}}"><h3>{{.Title}}</h3></a></li>
+    {{end}}
+</nav>
 {{end}}
 

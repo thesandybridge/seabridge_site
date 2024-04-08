@@ -2,6 +2,10 @@ window.onload = () => {
     copyButton();
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    activeMenuItem();
+})
+
 function copyButton() {
     const pre = document.querySelectorAll("pre");
 
@@ -17,7 +21,7 @@ function copyButton() {
         button.setAttribute("data-clipboard-target", `#code-${idx}`);
         code.appendChild(button);
 
-        this.addEventListener("click", () => {
+        button.addEventListener("click", () => {
             navigator.clipboard.writeText(code.innerText).then(() => {
                 button.innerHTML = "Copied!";
                 button.classList.add("copied");
@@ -29,4 +33,16 @@ function copyButton() {
         })
     })
 
+}
+
+function activeMenuItem() {
+    const currentPath = window.location.pathname;
+    const links = document.querySelectorAll('#main-nav a');
+
+    links.forEach(function(link) {
+        const href = link.getAttribute('href');
+        if (href === currentPath) {
+            link.classList.add('active');
+        }
+    });
 }
