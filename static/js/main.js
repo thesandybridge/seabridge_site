@@ -78,12 +78,16 @@ function processCommands(cmdInput, messagesDiv) {
                     pathParts.pop();
                     newPath = `${window.location.origin}/${pathParts.join('/')}`;
                 } else {
+                    let baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+
+                    if (!window.location.pathname.includes('/')) {
+                        baseUrl = window.location.origin;
+                    }
+
                     if (inputPath.startsWith('/')) {
                         newPath = window.location.origin + inputPath;
                     } else {
-                        const currentDir = window.location.pathname.endsWith('/') ?
-                            window.location.pathname : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-                        newPath = `${window.location.origin}${currentDir}${inputPath}`;
+                        newPath = `${baseUrl}/${inputPath}`;
                     }
                 }
 
@@ -94,6 +98,7 @@ function processCommands(cmdInput, messagesDiv) {
                 appendToTarget(target, "Invalid args");
             }
             break;
+
 
         case 'echo':
             if (args.length === 2) {
