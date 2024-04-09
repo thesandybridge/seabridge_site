@@ -37,6 +37,7 @@ html, body {
 body {
     min-height: 100vh;
     padding: 1rem;
+    transition: all .5s ease;
 }
 
 svg {

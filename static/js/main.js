@@ -12,9 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    document.body.addEventListener('htmx:afterOnLoad', function(event) {
+    document.body.addEventListener('htmx:beforeSwap', function(event) {
         try {
             const response = JSON.parse(event.detail.xhr.responseText);
+            event.preventDefault()
             switch (response.action) {
                 case "clear":
                     document.querySelector('.msg').innerHTML = '';
@@ -24,6 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     break;
                 case "navigate":
                     window.location.href = response.url;
+                case "rotate":
+                    const main = document.querySelector("body")
+                    main.style = "transform: rotate(45deg)";
             }
         } catch (e) {
         }

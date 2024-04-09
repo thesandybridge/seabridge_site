@@ -66,27 +66,35 @@ func buildRelativeURL(currentURL string, target string) (string, error) {
 		return "", err
 	}
 
-	pathSegments := strings.Split(strings.Trim(parsedURL.Path, "/"), "/")
+	appPath := strings.TrimPrefix(parsedURL.Path, "/commands")
+
+	segments := strings.Split(strings.Trim(appPath, "/"), "/")
 
 	switch target {
-	case "/":
+	case "home", "":
 		parsedURL.Path = "/"
 	case "..":
-		if len(pathSegments) > 0 {
-			parsedURL.Path = "/" + strings.Join(pathSegments[:len(pathSegments)-1], "/")
+		if len(segments) > 1 {
+			parsedURL.Path = "/" + strings.Join(segments[:len(segments)-1], "/")
+		} else {
+			parsedURL.Path = "/"
 		}
 	default:
-		if target != "" && !strings.HasPrefix(target, "/") {
-			target = "/" + target
-		}
-		if target == "/" || len(pathSegments) == 0 {
+		if strings.HasPrefix(target, "/") {
 			parsedURL.Path = target
 		} else {
-			parsedURL.Path = "/" + strings.Join(append(pathSegments[:len(pathSegments)-1], target), "/")
+			if appPath == "/" {
+				parsedURL.Path += target
+			} else {
+				newTargetPath := strings.Join(segments, "/") + "/" + target
+				parsedURL.Path = "/" + newTargetPath
+			}
 		}
 	}
 
-	return parsedURL.String(), nil
+	newURL := parsedURL.Scheme + "://" + parsedURL.Host + parsedURL.Path
+
+	return newURL, nil
 }
 
 func getFullURL(r *http.Request) string {
@@ -148,7 +156,10 @@ func commandHandler(w http.ResponseWriter, r *http.Request) {
 			message = "echo: no message provided"
 		}
 	case "contact":
-		message = "Nice try, it doesn't work yet... check me out on GitHub"
+		message = `Contact info:
+    email:      matt@mattmillerdev.io
+    linkedin:   /in/mattmillerdev/
+    github:     /thesandybridge`
 	case "cd":
 		if len(args) > 1 {
 			currentURL := getFullURL(r)
@@ -163,6 +174,8 @@ func commandHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			message = "cd: path required"
 		}
+	case "rotate":
+		response.Action = "rotate"
 	default:
 		message = args[0] + ": command not found"
 	}
