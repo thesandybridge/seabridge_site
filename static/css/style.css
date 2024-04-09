@@ -143,6 +143,7 @@ pre:not(.ascii, .ignore) {
     border: solid 1px var(--secondary-bg);
     border-radius: 5px;
     position: relative;
+    overflow: scroll;
 
     &:hover {
         border-color: var(--primary-fg);
