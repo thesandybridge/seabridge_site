@@ -98,8 +98,9 @@ function processCommands(cmdInput, messagesDiv) {
                 appendToTarget(target, "Invalid args");
             }
             break;
-
-
+        case 'github':
+            window.open("https://github.com/thesandybridge", "_blank");
+            break;
         case 'echo':
             if (args.length === 2) {
                 appendToTarget(messagesDiv, args[1]);
@@ -111,7 +112,7 @@ function processCommands(cmdInput, messagesDiv) {
             appendToTarget(messagesDiv, "Nice try, it doesn't work yet... check me out on GitHub");
             break;
         case 'help':
-            appendToTarget(messagesDiv, "Thanks for visiting my site! Here are some commands you can try...\n\tcd <arg>\n\techo <arg>\n\tclear\n\thelp\n\tcontact <your_email> <your_message>");
+            appendToTarget(messagesDiv, "Thanks for visiting my site! Here are some commands you can try...\n\tcd <arg>\n\techo <arg>\n\tclear\n\tgithub\n\thelp\n\tcontact <your_email> <your_message>");
             break;
         default:
             appendToTarget(messagesDiv, "Invalid command");
