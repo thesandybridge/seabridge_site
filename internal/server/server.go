@@ -1,14 +1,19 @@
 package server
 
 import (
+	"encoding/json"
+	"fmt"
 	"html/template"
 	"io/fs"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/microcosm-cc/bluemonday"
 
 	"sbxblog/internal/markdown"
 )
@@ -27,6 +32,7 @@ func StartServer() {
 	http.HandleFunc("/blog/", blogHandler)
 	http.HandleFunc("/", viewHandler)
 	http.HandleFunc("/404", errorHandler)
+	http.HandleFunc("/commands", commandHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -36,6 +42,141 @@ func StartServer() {
 	log.Println("Listening on http://localhost:" + port + "...")
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal("Failed to start server: ", err)
+	}
+}
+
+type CommandResponse struct {
+	Action  string `json:"action,omitempty"`
+	Message string `json:"message,omitempty"`
+	URL     string `json:"url,omitempty"`
+}
+
+func getItems() []string {
+	items := []string{
+		"blog",
+		"home",
+	}
+
+	return items
+}
+
+func buildRelativeURL(currentURL string, target string) (string, error) {
+	parsedURL, err := url.Parse(currentURL)
+	if err != nil {
+		return "", err
+	}
+
+	pathSegments := strings.Split(strings.Trim(parsedURL.Path, "/"), "/")
+
+	switch target {
+	case "/":
+		parsedURL.Path = "/"
+	case "..":
+		if len(pathSegments) > 0 {
+			parsedURL.Path = "/" + strings.Join(pathSegments[:len(pathSegments)-1], "/")
+		}
+	default:
+		if target != "" && !strings.HasPrefix(target, "/") {
+			target = "/" + target
+		}
+		if target == "/" || len(pathSegments) == 0 {
+			parsedURL.Path = target
+		} else {
+			parsedURL.Path = "/" + strings.Join(append(pathSegments[:len(pathSegments)-1], target), "/")
+		}
+	}
+
+	return parsedURL.String(), nil
+}
+
+func getFullURL(r *http.Request) string {
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	} else if forwardedProto := r.Header.Get("X-Forwarded-Proto"); forwardedProto != "" {
+		scheme = forwardedProto
+	}
+
+	host := r.Host
+
+	path := r.URL.Path
+
+	rawQuery := r.URL.RawQuery
+	if rawQuery != "" {
+		path += "?" + rawQuery
+	}
+
+	return scheme + "://" + host + path
+}
+
+func commandHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	p := bluemonday.StrictPolicy()
+	command := p.Sanitize(r.FormValue("cmd"))
+	args := strings.Fields(command)
+
+	var response CommandResponse
+	var message string
+
+	items := getItems()
+
+	switch args[0] {
+	case "help":
+		message = `Commands available:
+    help    - Show this help message
+    cd      - Navigate to another page
+    ls      - List available pages
+    clear   - Clear the screen
+    github  - Open the GitHub page in a new tab
+    echo    - Echo back the input
+    contact - Show contact information`
+	case "clear":
+		response.Action = "clear"
+	case "ls":
+		message = strings.Join(items, " ")
+	case "github":
+		response.Action = "open-url"
+		response.URL = "https://github.com/thesandybridge"
+	case "echo":
+		if len(args) > 1 {
+			message = strings.Join(args[1:], " ")
+		} else {
+			message = "echo: no message provided"
+		}
+	case "contact":
+		message = "Nice try, it doesn't work yet... check me out on GitHub"
+	case "cd":
+		if len(args) > 1 {
+			currentURL := getFullURL(r)
+			targetPath := args[1]
+			newPath, err := buildRelativeURL(currentURL, targetPath)
+			if err != nil {
+				message = fmt.Sprintf("Error: %v", err)
+			} else {
+				response.Action = "navigate"
+				response.URL = newPath
+			}
+		} else {
+			message = "cd: path required"
+		}
+	default:
+		message = args[0] + ": command not found"
+	}
+
+	if message != "" {
+		response.Message = fmt.Sprintf("<pre class='ignore'>&gt; %s\n%s</pre>", strings.Join(args, " "), message)
+	}
+
+	if response.Action != "" {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.Header().Set("Content-Type", "text/html")
+		w.Write([]byte(response.Message))
 	}
 }
 

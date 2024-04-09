@@ -2,9 +2,10 @@
 <div class="terminal-wrapper">
     <code id="terminal">
         <div class="msg"></div>
-        <div class="cmd-wrapper">
-            <label for="cmd">[you@sandybridge]$ </label><input id="cmd" type="text" spellcheck="false" autofocus/>
-        </div>
+        <form class="cmd-wrapper" hx-post="/commands" hx-target=".msg" hx-swap="beforeend">
+            <label for="cmd">[you@sandybridge]$ </label>
+            <input name="cmd" id="cmd" type="text" spellcheck="false" autofocus autocomplete="off" placeholder="Try typing a command like: help"/>
+        </form>
     </code>
 </div>
 {{end}}

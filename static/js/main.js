@@ -1,12 +1,53 @@
 window.onload = () => {
     copyButton();
-    terminal();
+    //terminal();
     showTerm();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     activeMenuItem();
+    document.body.addEventListener('htmx:afterRequest', function(event) {
+        if (event.detail.requestConfig.verb === "post") {
+            document.getElementById('cmd').value = '';
+        }
+    });
+
+    document.body.addEventListener('htmx:afterOnLoad', function(event) {
+        try {
+            const response = JSON.parse(event.detail.xhr.responseText);
+            switch (response.action) {
+                case "clear":
+                    document.querySelector('.msg').innerHTML = '';
+                    break;
+                case "open-url":
+                    window.open(response.url, "_blank");
+                    break;
+                case "navigate":
+                    window.location.href = response.url;
+            }
+        } catch (e) {
+        }
+    });
+
+    document.body.addEventListener('htmx:afterSwap', function() {
+        scrollToBottom();
+        focusInput();
+    });
+
 })
+
+function scrollToBottom() {
+    const terminalWrapper = document.querySelector('#terminal');
+    terminalWrapper.scrollTop = terminalWrapper.scrollHeight;
+}
+
+function focusInput() {
+    const inputField = document.getElementById('cmd');
+    if (inputField) {
+        inputField.focus();
+    }
+}
+
 
 function copyButton() {
     const posts = document.querySelector(".post");
@@ -49,143 +90,6 @@ function activeMenuItem() {
         const href = link.getAttribute('href');
         if (href === currentPath) {
             link.classList.add('active');
-        }
-    });
-}
-
-function processCommands(cmdInput, messagesDiv) {
-    const menu_items = [...document.querySelectorAll('#main-nav a')].map(i => i.outerText);
-    const commandText = cmdInput.value.trim();
-    const args = parseArguments(commandText);
-    appendToTarget(messagesDiv, `> ${commandText}`);
-
-    switch (args[0]) {
-        case 'clear':
-            messagesDiv.innerHTML = '';
-            break;
-        case 'ls':
-            appendToTarget(messagesDiv, menu_items.join(" "));
-            break;
-        case 'cd':
-            if (args.length === 2) {
-                const inputPath = args[1].toLowerCase();
-                let newPath;
-
-                if (inputPath === '/' || inputPath === 'home') {
-                    newPath = window.location.origin;
-                } else if (inputPath === '..') {
-                    const pathParts = window.location.pathname.split('/').filter(Boolean);
-                    pathParts.pop();
-                    newPath = `${window.location.origin}/${pathParts.join('/')}`;
-                } else {
-                    let baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-
-                    if (!window.location.pathname.includes('/')) {
-                        baseUrl = window.location.origin;
-                    }
-
-                    if (inputPath.startsWith('/')) {
-                        newPath = window.location.origin + inputPath;
-                    } else {
-                        newPath = `${baseUrl}/${inputPath}`;
-                    }
-                }
-
-                window.location.href = newPath;
-            } else if (args.length === 1) {
-                window.location.href = window.location.origin;
-            } else {
-                appendToTarget(target, "Invalid args");
-            }
-            break;
-        case 'github':
-            window.open("https://github.com/thesandybridge", "_blank");
-            break;
-        case 'echo':
-            if (args.length === 2) {
-                appendToTarget(messagesDiv, args[1]);
-            } else {
-                appendToTarget(messagesDiv, "Invalid args");
-            }
-            break;
-        case 'contact':
-            appendToTarget(messagesDiv, "Nice try, it doesn't work yet... check me out on GitHub");
-            break;
-        case 'help':
-            appendToTarget(messagesDiv, "Thanks for visiting my site! Here are some commands you can try...\n\tcd <arg>\n\techo <arg>\n\tclear\n\tgithub\n\thelp\n\tcontact <your_email> <your_message>");
-            break;
-        default:
-            appendToTarget(messagesDiv, "Invalid command");
-    }
-
-    cmdInput.remove();
-    createNewInput(messagesDiv);
-}
-
-function appendToTarget(messagesDiv, message) {
-    const newMessage = document.createElement('pre');
-    newMessage.classList.add('ignore');
-    newMessage.textContent = message;
-    messagesDiv.appendChild(newMessage);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-function createNewInput(messagesDiv) {
-    const wrapper = document.querySelector('.cmd-wrapper');
-    const newCmdInput = document.createElement('input');
-    newCmdInput.type = 'text';
-    newCmdInput.id = 'cmd';
-    newCmdInput.autofocus = true;
-    newCmdInput.spellcheck = false;
-
-    wrapper.append(newCmdInput);
-
-    newCmdInput.focus();
-
-    newCmdInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            processCommands(newCmdInput, messagesDiv);
-        }
-    });
-}
-
-
-function positionCursorForNextLine(cmdInput) {
-    cmdInput.focus();
-}
-
-function parseArguments(input) {
-    const args = [];
-    let currentArg = '';
-    let inQuotes = false;
-
-    for (const char of input) {
-        if (char === '"') {
-            inQuotes = !inQuotes;
-        } else if (!inQuotes && char === ' ') {
-            if (currentArg) {
-                args.push(currentArg);
-                currentArg = '';
-            }
-        } else {
-            currentArg += char;
-        }
-    }
-
-    if (currentArg) {
-        args.push(currentArg);
-    }
-
-    return args;
-}
-
-function terminal() {
-    const messagesDiv = document.querySelector('.msg');
-    const initialCmdInput = document.querySelector('#cmd');
-
-    initialCmdInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            processCommands(initialCmdInput, messagesDiv);
         }
     });
 }
@@ -235,4 +139,5 @@ function showTerm() {
         }
     });
 }
+
 
