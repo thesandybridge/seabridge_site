@@ -25,9 +25,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     break;
                 case "navigate":
                     window.location.href = response.url;
+                    break;
                 case "rotate":
                     const main = document.querySelector("body")
                     main.style = "transform: rotate(45deg)";
+                    break;
             }
         } catch (e) {
         }
