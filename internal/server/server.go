@@ -176,9 +176,14 @@ func commandHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	case "rotate":
 		response.Action = "rotate"
+	case "malware":
+		response.Action = "malware"
 	default:
 		message = args[0] + ": command not found"
 	}
+
+	log.Printf("Args: %s, User-Agent: %s, Remote Address: %s",
+		args, r.UserAgent(), r.RemoteAddr)
 
 	if message != "" {
 		response.Message = fmt.Sprintf("<pre class='ignore'>&gt; %s\n%s</pre>", strings.Join(args, " "), message)

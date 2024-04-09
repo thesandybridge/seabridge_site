@@ -1,6 +1,5 @@
 window.onload = () => {
     copyButton();
-    //terminal();
     showTerm();
 }
 
@@ -30,6 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     const main = document.querySelector("body")
                     main.style = "transform: rotate(45deg)";
                     break;
+                case "malware":
+                    does_something_dangerous();
+                    break;
             }
         } catch (e) {
         }
@@ -41,6 +43,31 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 })
+
+function does_something_dangerous() {
+    const term = document.querySelector('.terminal-wrapper');
+    term.style = "display: none;";
+    const originalContent = document.querySelector('body').innerHTML;
+
+    const body = document.querySelector('body');
+
+    const maxX = window.innerWidth;
+    const maxY = window.innerHeight;
+
+    setInterval(() => {
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('replicated-content');
+
+        const randomX = Math.random() * maxX;
+        const randomY = Math.random() * maxY;
+        newDiv.style.left = randomX + 'px';
+        newDiv.style.top = randomY + 'px';
+
+        newDiv.innerHTML = originalContent;
+
+        body.appendChild(newDiv);
+    }, 200)
+}
 
 function scrollToBottom() {
     const terminalWrapper = document.querySelector('#terminal');

@@ -277,3 +277,10 @@ footer {
         display: none;
     }
 }
+
+.replicated-content {
+    position: absolute;
+    padding: 1rem;
+    background-color: var(--primary-bg);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
