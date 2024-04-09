@@ -28,8 +28,13 @@ func StartServer() {
 	http.HandleFunc("/", viewHandler)
 	http.HandleFunc("/404", errorHandler)
 
-	log.Println("Listening on http://localhost:8081...")
-	if err := http.ListenAndServe(":8081", nil); err != nil {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8081"
+	}
+
+	log.Println("Listening on http://localhost:" + port + "...")
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal("Failed to start server: ", err)
 	}
 }
