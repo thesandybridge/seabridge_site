@@ -18,11 +18,20 @@ import (
 	"sbxblog/internal/markdown"
 )
 
+func parseTemplates(templateFiles ...string) *template.Template {
+	baseTemplate := "templates/base.html"
+	navTemplate := "templates/nav.html"
+	terminalTemplate := "templates/terminal.html"
+
+	files := append([]string{baseTemplate, navTemplate, terminalTemplate}, templateFiles...)
+	return template.Must(template.ParseFiles(files...))
+}
+
 var (
-	indexTemplate        = template.Must(template.ParseFiles("templates/index.html", "templates/base.html", "templates/nav.html", "templates/terminal.html"))
-	blogTemplate         = template.Must(template.ParseFiles("templates/blog.html", "templates/base.html", "templates/nav.html", "templates/terminal.html"))
-	postTemplate         = template.Must(template.ParseFiles("templates/post.html", "templates/base.html", "templates/nav.html", "templates/terminal.html"))
-	pageNotFoundTemplate = template.Must(template.ParseFiles("templates/404.html", "templates/base.html", "templates/nav.html", "templates/terminal.html"))
+	indexTemplate        = parseTemplates("templates/index.html")
+	blogTemplate         = parseTemplates("templates/blog.html")
+	postTemplate         = parseTemplates("templates/post.html")
+	pageNotFoundTemplate = parseTemplates("templates/404.html")
 )
 
 func StartServer() {
