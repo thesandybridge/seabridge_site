@@ -50,14 +50,24 @@ func StartServer() {
 	}
 }
 
+type BlogPostSummary struct {
+	Title string
+	Slug  string
+}
+
+type Page struct {
+	Title           string
+	Description     string
+	Posts           *[]BlogPostSummary
+	Content         *template.HTML
+	Classes         string
+	ContentTemplate string
+	Date            string
+	Path            string
+}
+
 func viewHandler(w http.ResponseWriter, r *http.Request) {
-	data := struct {
-		Title       string
-		Description string
-		Classes     string
-		Date        string
-		Path        string
-	}{
+	data := Page{
 		Title:       "sbx blog",
 		Description: "A simple blog built with Go and Markdown.",
 		Classes:     "home",
@@ -75,22 +85,6 @@ func errorHandler(w http.ResponseWriter, r *http.Request) {
 	if err := pageNotFoundTemplate.ExecuteTemplate(w, "base", nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-}
-
-type BlogPostSummary struct {
-	Title string
-	Slug  string
-}
-
-type Page struct {
-	Title           string
-	Description     string
-	Posts           *[]BlogPostSummary
-	Content         *template.HTML
-	Classes         string
-	ContentTemplate string
-	Date            string
-	Path            string
 }
 
 func blogHandler(w http.ResponseWriter, r *http.Request) {
