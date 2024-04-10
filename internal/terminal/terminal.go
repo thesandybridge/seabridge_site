@@ -36,6 +36,7 @@ func buildRelativeURL(currentURL string, target string) (string, error) {
 
 	segments := strings.Split(strings.Trim(appPath, "/"), "/")
 
+	// TODO: Need to fix the relative path structure and also incorporate `cd` command to go home with no args
 	switch target {
 	case "home", "":
 		parsedURL.Path = "/"
