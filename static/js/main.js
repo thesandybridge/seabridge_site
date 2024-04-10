@@ -81,7 +81,6 @@ function focusInput() {
     }
 }
 
-
 function copyButton() {
     const posts = document.querySelector(".post");
 
