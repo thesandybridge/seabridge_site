@@ -82,6 +82,17 @@ type BlogPostSummary struct {
 	Slug  string
 }
 
+type Page struct {
+	Title           string
+	Description     string
+	Posts           *[]BlogPostSummary
+	Content         *template.HTML
+	Classes         string
+	ContentTemplate string
+	Date            string
+	Path            string
+}
+
 func blogHandler(w http.ResponseWriter, r *http.Request) {
 	slug := strings.TrimPrefix(r.URL.Path, "/blog/")
 	if slug == "" {
@@ -110,18 +121,10 @@ func serveBlogList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := struct {
-		Title           string
-		Description     string
-		Posts           []BlogPostSummary
-		Classes         string
-		ContentTemplate string
-		Date            string
-		Path            string
-	}{
+	data := Page{
 		Title:           "Your Blog Title",
 		Description:     "Your Blog Description",
-		Posts:           posts,
+		Posts:           &posts,
 		Classes:         "blog",
 		ContentTemplate: "blog.html",
 		Date:            time.Now().Format("2006"),
@@ -145,17 +148,11 @@ func serveBlogPost(w http.ResponseWriter, r *http.Request, slug string) {
 		return
 	}
 
-	data := struct {
-		Title           string
-		Content         template.HTML
-		Description     string
-		Classes         string
-		ContentTemplate string
-		Date            string
-		Path            string
-	}{
+	content := template.HTML(htmlContent)
+
+	data := Page{
 		Title:           strings.ReplaceAll(slug, "-", " "),
-		Content:         template.HTML(htmlContent),
+		Content:         &content,
 		Description:     "Your Blog Description",
 		Classes:         "post",
 		ContentTemplate: "post.html",
