@@ -148,12 +148,24 @@ h6 {
     font-display: swap;
 }
 
+code {
+    background-color: #303030;
+    border-radius: 5px;
+    padding: 2px;
+}
+
 pre:not(.ascii, .ignore) {
     padding: 1rem;
     border: solid 1px var(--secondary-bg);
     border-radius: 5px;
     position: relative;
     overflow: scroll;
+
+    code {
+        background: none;
+        border-radius: 0;
+        padding: 0;
+    }
 
     &:hover {
         border-color: var(--primary-fg);
@@ -293,3 +305,4 @@ footer {
     background-color: var(--primary-bg);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
+
