@@ -28,7 +28,6 @@ func ConvertToHTML(filePath string) (string, error) {
 			parser.WithAutoHeadingID(),
 		),
 		goldmark.WithRendererOptions(
-			html.WithHardWraps(),
 			html.WithXHTML(),
 		),
 	)
