@@ -53,7 +53,7 @@ was the most popular programming language at the time.
 JavaScript was really a scripting language at the beginning and was never
 intended for heavy programming. This means that the architectural decisions made
 early on were void of potential future use cases such as memory management and
-type safty. I won't get into those details unless you want to learn more but
+type safety. I won't get into those details unless you want to learn more but
 just know that it has become something it was never intended to be. That is
 partly why the ECMAScript standard was created.
 
@@ -80,7 +80,7 @@ interpretation of the HTML. So for example:
 </div>
 ```
 
-would be interpretted roughly as:
+would be interpreted roughly as:
 
 ```bash
 ...
@@ -184,7 +184,7 @@ btn.addEventListener("click", function() {
 We start by creating our simple HTML structure. We then add some CSS to make
 sure our `<div>` isn't visible on the page when it is first loaded.
 
-Next we add an event listener to our btn which queues the click event into the
+Next we add an event listener to our `btn` which queues the click event into the
 Event Loop. When a user clicks on this button the code inside the event listener
 callback will be executed, in this case toggling whether or not the <div> has
 the class "active" or not.
@@ -207,7 +207,7 @@ the DOM.
 CSS cannot effect the DOM, it can only change the way it is rendered. JavaScript
 on the other hand CAN effect the DOM. So say we wanted to remove that <div> from
 the DOM altogether. We can do that by changing the logic inside our "click"
-event. (I will ommit the previously defined code and just focus on this event)
+event. (I will omit the previously defined code and just focus on this event)
 
 ```javascript
 btn.addEventListener("click", () => {
@@ -258,7 +258,7 @@ be able to. This all happens on the server before any information gets sent back
 to the client. This is in contrast to the examples we discussed earlier with
 JavaScript. PHP does not allow for easy DOM manipulation either, not in the same
 way that JavaScript does so doing things like showing and hiding an element
-dynamically isn't feasable.
+dynamically isn't feasible.
 
 This is where server side JavaScript runtimes like nodejs come in. Similar to
 php, nodejs can be installed on a server acting as a runtime interpreting code
@@ -281,7 +281,7 @@ for handling multiple requests quickly.
 Traditionally this was not efficient and it was faster to handle all logic on
 the server which could have more resources. As the amount of users visiting
 the site scaled so would the amount of server resources. Today, this problem
-isn't as prevelant due to the rise of frontend frameworks. Websites can handle
+isn't as prevalent due to the rise of frontend frameworks. Websites can handle
 the minimal amount of server side code such as establish connections, handling
 user logins, form submissions and then allow the rest of the logic to be handled
 by the client (browser). In some cases all of the logic is handled by the client
@@ -299,7 +299,7 @@ same example from earlier except using React, we will then discuss the benefits.
 
 ### React
 
-Previously we showed an example of how JavaScript can maniuplate the DOM. Below
+Previously we showed an example of how JavaScript can manipulate the DOM. Below
 is that same example using React.
 
 ```javascript
@@ -423,7 +423,7 @@ state to an empty array initially. We are also creating a state variable called
 newTodo. We can use this to track new todos to add to our todo list.
 
 Our first function `addTodo` will check add new todos to the list of todos using
-spread syntax `[...todos, ..]`. This basically means spready the current list
+spread syntax `[...todos, ..]`. This basically means spread the current list
 first then add the stuff after the comma. Next we reset the newTodo state to
 empty.
 
