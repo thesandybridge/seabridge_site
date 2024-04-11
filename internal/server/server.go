@@ -116,8 +116,8 @@ func serveBlogList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := Page{
-		Title:           "Your Blog Title",
-		Description:     "Your Blog Description",
+		Title:           "The Blog",
+		Description:     "This is THE blog",
 		Posts:           &posts,
 		Classes:         "blog",
 		ContentTemplate: "blog.html",
@@ -147,7 +147,7 @@ func serveBlogPost(w http.ResponseWriter, r *http.Request, slug string) {
 	data := Page{
 		Title:           strings.ReplaceAll(slug, "-", " "),
 		Content:         &content,
-		Description:     "Your Blog Description",
+		Description:     strings.ReplaceAll(slug, "-", " "),
 		Classes:         "post",
 		ContentTemplate: "post.html",
 		Date:            time.Now().Format("2006"),
