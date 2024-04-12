@@ -124,7 +124,7 @@ our variable. This makes it easier to access our data later.
 `document.querySelector('p');` is almost self explanatory. We are using the
 document object provided by the DOM which is the top level object. Each HTML
 file is known as a document. We then query a selector which in this case is the
-tag name. So now `pElement` stores the entire object data for our `p` tag.
+tag name. So now `pElement` stores the entire object data for our `<p>` tag.
 
 There is a small issue with this code that doesn't really matter for our
 example. The way we are selecting the `<p>` tag may inadvertently target the first
@@ -132,7 +132,7 @@ example. The way we are selecting the `<p>` tag may inadvertently target the fir
 changing the wrong one. This can be solved by using a more granular selector such as an ID or
 Classname but it doesn't matter for this brief example.
 
-`pElement.innerText` is a reference to the innerText data stored in the <p>
+`pElement.innerText` is a reference to the innerText data stored in the `<p>`
 object. Prior to us changing it it would show the content we defined earlier
 "This is some content". We are now changing that to "This was added by
 JavaScript".
@@ -186,7 +186,7 @@ sure our `<div>` isn't visible on the page when it is first loaded.
 
 Next we add an event listener to our `btn` which queues the click event into the
 Event Loop. When a user clicks on this button the code inside the event listener
-callback will be executed, in this case toggling whether or not the <div> has
+callback will be executed, in this case toggling whether or not the `<div>` has
 the class "active" or not.
 
 CSS is executing from top down hence Cascading Style Sheet, so the .active class
@@ -199,13 +199,13 @@ simple as showing/hiding elements is a common practice say for making a Modal
 popup on a page. You are essentially just toggling the display or adding a new
 class to the element to add additional styles to it.
 
-A key thing to note here is that the <div> is still visible in the DOM. That is
+A key thing to note here is that the `<div>` is still visible in the DOM. That is
 why we are able to query it in JavaScript. The `display: none;` just changes the
 way the element is rendered in the window it does not effect how it appears in
 the DOM.
 
 CSS cannot effect the DOM, it can only change the way it is rendered. JavaScript
-on the other hand CAN effect the DOM. So say we wanted to remove that <div> from
+on the other hand CAN effect the DOM. So say we wanted to remove that `<div>` from
 the DOM altogether. We can do that by changing the logic inside our "click"
 event. (I will omit the previously defined code and just focus on this event)
 
@@ -355,7 +355,7 @@ HTML. This is similar to how twig works in Laravel for example. We call these
 concepts "Templating Languages".
 
 `{visible && ()}` basically means return the code inside `()` if `visible` is
-true. By default we set it to false, so when the component first loads the <div>
+true. By default we set it to false, so when the component first loads the `<div>`
 won't load. Clicking on our button will toggle the state of visible from true to
 false.
 
@@ -364,7 +364,7 @@ be paired with API calls, or User authentication and much more to provide clean
 and simple UIs.
 
 Let's take a look at another example. Previously we manually changed the
-innerText of our <p> tag. Let's provide a way to create a todo list and allow
+innerText of our `<p>` tag. Let's provide a way to create a todo list and allow
 the user to add todos and change the text on the fly. This is a very common
 example demonstrating the power of react.
 
