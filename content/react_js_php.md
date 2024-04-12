@@ -127,8 +127,8 @@ file is known as a document. We then query a selector which in this case is the
 tag name. So now `pElement` stores the entire object data for our `p` tag.
 
 There is a small issue with this code that doesn't really matter for our
-example. The way we are selecting the <p> tag may inadvertently target the first
-<p> tag on the page. In other words, if we had another one on the page we may be
+example. The way we are selecting the `<p>` tag may inadvertently target the first
+`<p>` tag on the page. In other words, if we had another one on the page we may be
 changing the wrong one. This can be solved by using a more granular selector such as an ID or
 Classname but it doesn't matter for this brief example.
 
