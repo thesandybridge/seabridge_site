@@ -11,10 +11,9 @@ GOOS=linux GOARCH=amd64 go build ./cmd/webserver/main.go
 
 ## License
 
-The **code** in this repository is licensed under the [MIT License](LICENSE).
+This repository has a **dual license**:
 
-The **blog content** (posts, articles, images) is licensed under [CC BY-NC-SA 4.0](CONTENT_LICENSE). You may share and modify the content **non-commercially**, as long as you credit the original source and use the same license.
+- The **code** is licensed under the [MIT License](LICENSE).
+- The **blog content** (posts, articles, media) is licensed under **Creative Commons BY-NC-SA 4.0**.
 
-For more details:
-- MIT License: [LICENSE](LICENSE)
-- Creative Commons License: [CONTENT_LICENSE](CONTENT_LICENSE)
+For full details, see the [LICENSE](LICENSE) file.
