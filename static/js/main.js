@@ -1,6 +1,7 @@
 window.onload = () => {
     copyButton();
     showTerm();
+    trackInput();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -172,4 +173,21 @@ function showTerm() {
     });
 }
 
+
+function trackInput() {
+  const inputField = document.querySelector("#cmd");
+
+  if (inputField) {
+    inputField.addEventListener("input", function (event) {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: "input_typing",
+        input_value: event.target.value,
+        input_id: event.target.id || "unknown_input",
+        input_name: event.target.name || "unknown_name",
+        input_placeholder: event.target.placeholder || "no_placeholder"
+      });
+    });
+  }
+}
 
